@@ -5,28 +5,28 @@ on: push
 jobs:
   ubuntu_job:
     name: ubuntu_job
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
-      - name:
+      - name: Print Date
         run: date
 
   windows_job:
     name: windows_job
-    runs-on: windows-lates
+    runs-on: windows-latest
     steps:
       - name: Print Date
-        run: Get-Date
+        run: date
 
   macos_job:
     name: macos_job
-    runs-on: macos-lates
+    runs-on: macos-latest
     steps:
       - name: Print Date
         run: date
 
   summary_job:
     name: summary_job
-    runs-on: macos-lates
+    runs-on: macos-latest
     needs: [ubuntu_job, windows_job, macos_job]
     steps:
       - name: Print Final Date
