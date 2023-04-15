@@ -1,3 +1,28 @@
 name: Challenge 3
 
 on: push
+
+env:
+  ARTEFACT_NAME: Hello
+
+jobs:
+  job1:
+    name: Test
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v2
+      - name: Run the test
+        run: python hello.py
+  job2:
+    name: Build
+    needs: job1
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v2
+      - name: Upload artefact
+        uses: aretifact/upload-artifact@v3.2.1
+        with:
+          name: ${{ env.ARTEFACT_NAME }}
+          path: .
