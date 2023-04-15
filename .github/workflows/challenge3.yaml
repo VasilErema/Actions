@@ -22,7 +22,7 @@ jobs:
       - name: Checkout the Repo
         uses: actions/checkout@v2
       - name: Upload artefact
-        uses: aretifact/upload-artifact@v3.2.1
+        uses: actions/upload-artifact@v3.2.1
         with:
           name: ${{ env.ARTEFACT_NAME }}
           path: .
