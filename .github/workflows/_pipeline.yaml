@@ -15,22 +15,16 @@ jobs:
       - name: Install bundle
         run: bundle install
       - name: Check if gemfile is up to date
-        id: check1
-        run: git diff --name-only Gemfile.lock && exit_on_error "Gemfile.lock is already not synched with Gemfile"
-        continue-on-error: true
-      - name: try update bundler
-        if: steps.check1.output.status == failure
+        run: git diff --name-only Gemfile.lock && "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
+      - name: Update bundler
+        if: ${{ UPDATE_JOB_CONTINUE }}
         run: bundle update
       - name: Check if gemfile is changed by the job
-        if: steps.check1.output.status == failure
-        id: check2
-        run: git diff --name-only Gemfile.lock || exit_on_error "Gemfile.lock is already not synched with Gemfile"
-        continue-on-error: true
+        if: ${{ UPDATE_JOB_CONTINUE }}
+        run: git diff --name-only Gemfile.lock || "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
       - name: push changes
-        if: steps.check2.output.status == failure
+        if: ${{ UPDATE_JOB_CONTINUE }}
         run: |
           git add Gemfile.lock
           git commit -m"Update Gemfile.lock"
           git push
-
-        
