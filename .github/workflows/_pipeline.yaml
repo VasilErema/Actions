@@ -15,13 +15,13 @@ jobs:
       - name: Install bundle
         run: bundle install
       - name: Check if gemfile is up to date
-        run: git diff --name-only Gemfile.lock && "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
+        run: git diff --name-only Gemfile.lock && echo "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
       - name: Update bundler
         if: ${{ env.UPDATE_JOB_CONTINUE }}
         run: bundle update
       - name: Check if gemfile is changed by the job
         if: ${{ env.UPDATE_JOB_CONTINUE }}
-        run: git diff --name-only Gemfile.lock || "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
+        run: git diff --name-only Gemfile.lock || echo "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
       - name: push changes
         if: ${{ env.UPDATE_JOB_CONTINUE }}
         run: |
