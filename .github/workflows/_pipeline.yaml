@@ -1,0 +1,36 @@
+name: Pipeline
+
+on: push
+
+env:
+  UPDATE_JOB_CONTINUE: true
+
+jobs:
+  verify_installation_job:
+    name: Update Gems
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v3.5.2
+      - name: Install bundle
+        run: bundle install
+      - name: Check if gemfile is up to date
+        id: check1
+        run: git diff --name-only Gemfile.lock && exit_on_error "Gemfile.lock is already not synched with Gemfile"
+        continue-on-error: true
+      - name: try update bundler
+        if: steps.check1.output.status == failure
+        run: bundle update
+      - name: Check if gemfile is changed by the job
+        if: steps.check1.output.status == failure
+        id: check2
+        run: git diff --name-only Gemfile.lock || exit_on_error "Gemfile.lock is already not synched with Gemfile"
+        continue-on-error: true
+      - name: push changes
+        if: steps.check2.output.status == failure
+        run: |
+          git add Gemfile.lock
+          git commit -m"Update Gemfile.lock"
+          git push
+
+        
