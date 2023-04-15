@@ -1,1 +1,21 @@
+name: Challenge2
 
+on: push
+
+jobs: 
+  the_job:
+    runs-on: macos-latest
+    env:
+      ARTIFACT_NAME: file.txt # file with ls of the directory
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3.5.2
+    - name: Make artefact
+      run: |
+        touch ${{ env.ARTIFACT_NAME }}
+        ls >> ${{ env.ARTIFACT_NAME }}
+    - name: Upload artefact
+      uses: actions/upload-artifact@3.1.2
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        
