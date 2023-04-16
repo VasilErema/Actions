@@ -2,7 +2,7 @@ name: Pipeline
 
 on: 
   schedule:
-    - cron: '0 12 39 * *' # run at 4:45 AM UTC
+    - cron: '50 12 * * *' # run at 4:45 AM UTC
 
 env:
   SHOULD_SKIP: 'false'
