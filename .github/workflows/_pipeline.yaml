@@ -12,15 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3.5.2
 
-      - name: Check if Gemfile.lock is synchronized with Gemfile
-        run: |
-          bundle install
-          git diff --name-only | grep Gemfile.lock && should_skip=true || should_skip=false
-          echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
-          echo "SHOULD_SKIP=$should_skip"
-          git diff
-          bundler -v
-
       - name: Try update bundle
         if: ${{ env.SHOULD_SKIP == 'false' }}
         run: |
