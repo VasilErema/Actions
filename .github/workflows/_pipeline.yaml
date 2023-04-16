@@ -17,6 +17,7 @@ jobs:
           bundle install
           git diff --name-only | grep Gemfile.lock && should_skip=true || should_skip=false
           echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
+          echo "SHOULD_SKIP=$should_skip"
 
       - name: Try update bundle
         if: ${{ env.SHOULD_SKIP }} == false
@@ -24,10 +25,13 @@ jobs:
           bundle update
           git diff --name-only | grep Gemfile.lock && should_skip=false || should_skip=true
           echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
+          echo "SHOULD_SKIP=$should_skip"
 
       - name: Run All tests
         if: ${{ env.SHOULD_SKIP }} == false
-        run: echo 'Run all tests'
+        run: |
+          echo 'Run all tests'
+          echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
       - name: Push changes
         if: ${{ env.SHOULD_SKIP }} == false
