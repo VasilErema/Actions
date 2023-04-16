@@ -13,7 +13,7 @@ jobs:
         id: gemfile-initial-state-check
         run: |
           bundle install
-          git diff --name-only Gemfile.lock && result=false || result=true
+          git diff --name-only Gemfile.lock | grep Gemfile.lock && result=false || result=true
           echo "gemfile-is-initially-updated=$result" >> $GITHUB_OUTPUT
 
       - name: Try update bundle
@@ -21,15 +21,15 @@ jobs:
         if: ${{ steps.gemfile-initial-state-check.outputs.gemfile-is-initially-updated }}
         run: |
           bundle update
-          git diff --name-only Gemfile.lock && result=true || result=false
+          git diff --name-only Gemfile.lock | grep Gemfile.lock && result=true || result=false
           echo "gemfile_got_updates=$result" >> $GITHUB_OUTPUT
 
       - name: Run All tests
-        if: ${{ steps.gem-file-is-updated.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile-update-attempt.outputs.gemfile_got_updates }}
         run: echo 'Run all tests'
 
       - name: Push changes
-        if: ${{ steps.gem-file-is-updated.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile-update-attempt.outputs.gemfile_got_updates }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
