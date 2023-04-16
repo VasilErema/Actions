@@ -2,6 +2,9 @@ name: Pipeline
 
 on: push
 
+env:
+  SHOULD_SKIP: false
+
 jobs:
   verify_installation_job:
     name: Update Gems
@@ -10,26 +13,24 @@ jobs:
       - uses: actions/checkout@v3.5.2
 
       - name: Check if Gemfile.lock is synchronized with Gemfile
-        id: gemfile_initial_state_check
         run: |
           bundle install
-          git diff --name-only | grep Gemfile.lock && gemfile_is_initially_updated=false || gemfile_is_initially_updated=true
-          echo "gemfile_is_initially_updated=$gemfile_is_initially_updated" >> "$GITHUB_OUTPUT"
+          git diff --name-only | grep Gemfile.lock && should_skip=true || should_skip=false
+          echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
 
       - name: Try update bundle
-        id: gemfile_update_attempt
-        if: ${{ steps.gemfile_initial_state_check.outputs.gemfile_is_initially_updated }} == true
+        if: ${{ env.SHOULD_SKIP }} == false
         run: |
           bundle update
-          git diff --name-only | grep Gemfile.lock && gemfile_got_updates=true || gemfile_got_updates=false
-          echo "gemfile_got_updates=$gemfile_got_updates" >> "$GITHUB_OUTPUT"
+          git diff --name-only | grep Gemfile.lock && should_skip=false || should_skip=true
+          echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
 
       - name: Run All tests
-        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }} == true
+        if: ${{ env.SHOULD_SKIP }} == false
         run: echo 'Run all tests'
 
       - name: Push changes
-        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }} == true
+        if: ${{ env.SHOULD_SKIP }} == false
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
