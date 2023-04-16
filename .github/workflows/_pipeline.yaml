@@ -14,6 +14,7 @@ jobs:
         run: |
           bundle install
           git diff --name-only Gemfile.lock | grep Gemfile.lock && result=false || result=true
+          echo "$result=result"
           echo "gemfile-is-initially-updated=$result" >> $GITHUB_OUTPUT
 
       - name: Try update bundle
@@ -22,6 +23,7 @@ jobs:
         run: |
           bundle update
           git diff --name-only Gemfile.lock | grep Gemfile.lock && result=true || result=false
+          echo "result=$result"
           echo "gemfile_got_updates=$result" >> $GITHUB_OUTPUT
 
       - name: Run All tests
