@@ -10,28 +10,26 @@ jobs:
       - uses: actions/checkout@v3.5.2
 
       - name: Check if Gemfile.lock is synchronized with Gemfile
-        id: gemfile-initial-state-check
+        id: gemfile_initial_state_check
         run: |
           bundle install
-          git diff --name-only Gemfile.lock | grep Gemfile.lock && result=false || result=true
-          git diff --name-only | grep Gemfile.lock && gemfile-is-initially-updated=false || gemfile-is-initially-updated=true
-          echo "gemfile-is-initially-updated=$gemfile-is-initially-updated" >> $GITHUB_OUTPUT
+          git diff --name-only | grep Gemfile.lock && gemfile_is_initially_updated=false || gemfile_is_initially_updated=true
+          echo "gemfile_is_initially_updated=$gemfile_is_initially_updated" >> $GITHUB_OUTPUT
 
       - name: Try update bundle
-        id: gemfile-update-attempt
-        if: ${{ steps.gemfile-initial-state-check.outputs.gemfile-is-initially-updated }}
+        id: gemfile_update_attempt
+        if: ${{ steps.gemfile_initial_state_check.outputs.gemfile_is_initially_updated }}
         run: |
           bundle update
-          git diff --name-only Gemfile.lock | grep Gemfile.lock && result=true || result=false
           git diff --name-only | grep Gemfile.lock && gemfile_got_updates=true || gemfile_got_updates=false
           echo "gemfile_got_updates=$gemfile_got_updates" >> $GITHUB_OUTPUT
 
       - name: Run All tests
-        if: ${{ steps.gemfile-update-attempt.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }}
         run: echo 'Run all tests'
 
       - name: Push changes
-        if: ${{ steps.gemfile-update-attempt.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
