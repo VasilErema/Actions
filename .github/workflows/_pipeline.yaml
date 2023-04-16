@@ -13,15 +13,15 @@ jobs:
         id: gemfile-initial-state-check
         run: |
           bundle install
-          result = git diff --name-only Gemfile.lock && false || true
+          git diff --name-only Gemfile.lock && result=false || result=true
           echo "gemfile-is-initially-updated=$result" >> $GITHUB_OUTPUT
 
       - name: Try update bundle
         id: gemfile-update-attempt
         if: ${{ steps.gemfile-initial-state-check.outputs.gemfile-is-initially-updated }}
         run: |
-          bundle update 
-          result = git diff --name-only Gemfile.lock && true || false
+          bundle update
+          git diff --name-only Gemfile.lock && result=true || result=false
           echo "gemfile_got_updates=$result" >> $GITHUB_OUTPUT
 
       - name: Run All tests
