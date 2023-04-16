@@ -29,4 +29,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add Gemfile.lock
           git commit -m"Automatic update of Gemfile.lock"
-          git push "https://${{ env.GITHUB_ACTOR }}:${{ env.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_REPOSITORY }}"
+          git push
