@@ -13,8 +13,7 @@ jobs:
         id: gemfile-initial-state-check
         run: |
           bundle install
-          if [[ git diff --name-only Gemfile.lock ]]
-          then
+          if [[ git diff --name-only Gemfile.lock || false ]]; then
             echo "gemfile-is-initially-updated=false" >> $GITHUB_OUTPUT
           else
             echo "gemfile-is-initially-updated=true" >> $GITHUB_OUTPUT
@@ -25,8 +24,7 @@ jobs:
         if: ${{ steps.gemfile-initial-state-check.outputs.gemfile-is-initially-updated }}
         run: |
           bundle update
-          if [[ git diff --name-only Gemfile.lock ]]
-          then
+          if [[ git diff --name-only Gemfile.lock || false ]]; then
             echo "gemfile_got_updates=true" >> $GITHUB_OUTPUT
           else
             echo "gemfile_got_updates=false" >> $GITHUB_OUTPUT
