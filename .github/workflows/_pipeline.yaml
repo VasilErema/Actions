@@ -2,28 +2,42 @@ name: Pipeline
 
 on: push
 
-env:
-  UPDATE_JOB_CONTINUE: true
-
 jobs:
   verify_installation_job:
     name: Update Gems
     runs-on: macos-latest
     steps:
-      - name: Checkout the Repo
-        uses: actions/checkout@v3.5.2
-      - name: Install bundle
-        run: bundle install
-      - name: Check if gemfile is up to date
-        run: git diff --name-only Gemfile.lock && echo "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
-      - name: Update bundler
-        if: ${{ env.UPDATE_JOB_CONTINUE }}
-        run: bundle update
-      - name: Check if gemfile is changed by the job
-        if: ${{ env.UPDATE_JOB_CONTINUE }}
-        run: git diff --name-only Gemfile.lock || echo "UPDATE_JOB_CONTINUE=false" >> $GITHUB_ENV
-      - name: push changes
-        if: ${{ env.UPDATE_JOB_CONTINUE }}
+      - uses: actions/checkout@v3.5.2
+
+      - name: Check if Gemfile.lock is synchronized with Gemfile
+        id: gemfile-initial-state-check
+        run: |
+          bundle install
+          if [[ git diff --name-only Gemfile.lock ]]
+          then
+            echo "gemfile-is-initially-updated=false" >> $GITHUB_OUTPUT
+          else
+            echo "gemfile-is-initially-updated=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Try update bundle
+        id: gemfile-update-attempt
+        if: ${{ steps.gemfile-initial-state-check.outputs.gemfile-is-initially-updated }}
+        run: |
+          bundle update
+          if [[ git diff --name-only Gemfile.lock ]]
+          then
+            echo "gemfile_got_updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "gemfile_got_updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run All tests
+        if: ${{ steps.gem-file-is-updated.outputs.gemfile_got_updates }}
+        run: echo 'Run all tests'
+
+      - name: Push changes
+        if: ${{ steps.gem-file-is-updated.outputs.gemfile_got_updates }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
