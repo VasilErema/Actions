@@ -3,7 +3,7 @@ name: Pipeline
 on: push
 
 env:
-  SHOULD_SKIP: false
+  SHOULD_SKIP: 'false'
 
 jobs:
   verify_installation_job:
@@ -20,7 +20,7 @@ jobs:
           echo "SHOULD_SKIP=$should_skip"
 
       - name: Try update bundle
-        if: ${{ env.SHOULD_SKIP == false }}
+        if: ${{ env.SHOULD_SKIP == 'false' }}
         run: |
           bundle update
           git diff --name-only | grep Gemfile.lock && should_skip=false || should_skip=true
@@ -28,13 +28,13 @@ jobs:
           echo "SHOULD_SKIP=$should_skip"
 
       - name: Run All tests
-        if: ${{ env.SHOULD_SKIP == false }}
+        if: ${{ env.SHOULD_SKIP == 'false' }}
         run: |
           echo 'Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
       - name: Push changes
-        if: ${{ env.SHOULD_SKIP == false }}
+        if: ${{ env.SHOULD_SKIP == 'false' }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
