@@ -18,18 +18,18 @@ jobs:
 
       - name: Try update bundle
         id: gemfile_update_attempt
-        if: ${{ steps.gemfile_initial_state_check.outputs.gemfile_is_initially_updated }}
+        if: ${{ steps.gemfile_initial_state_check.outputs.gemfile_is_initially_updated }} == true
         run: |
           bundle update
           git diff --name-only | grep Gemfile.lock && gemfile_got_updates=true || gemfile_got_updates=false
           echo "gemfile_got_updates=$gemfile_got_updates" >> "$GITHUB_OUTPUT"
 
       - name: Run All tests
-        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }} == true
         run: echo 'Run all tests'
 
       - name: Push changes
-        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }}
+        if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }} == true
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
