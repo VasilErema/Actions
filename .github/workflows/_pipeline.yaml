@@ -19,6 +19,7 @@ jobs:
           echo "SHOULD_SKIP=$should_skip" >> $GITHUB_ENV
           echo "SHOULD_SKIP=$should_skip"
           git diff
+          bundler -v
 
       - name: Try update bundle
         if: ${{ env.SHOULD_SKIP == 'false' }}
