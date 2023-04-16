@@ -1,4 +1,4 @@
-name: Pipeline
+name: Nightly Gemfile auto-update
 
 on: 
   schedule:
