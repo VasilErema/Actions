@@ -14,7 +14,7 @@ jobs:
         run: |
           bundle install
           git diff --name-only | grep Gemfile.lock && gemfile_is_initially_updated=false || gemfile_is_initially_updated=true
-          echo "gemfile_is_initially_updated=$gemfile_is_initially_updated" >> $GITHUB_OUTPUT
+          echo "gemfile_is_initially_updated=$gemfile_is_initially_updated" >> "$GITHUB_OUTPUT"
 
       - name: Try update bundle
         id: gemfile_update_attempt
@@ -22,7 +22,7 @@ jobs:
         run: |
           bundle update
           git diff --name-only | grep Gemfile.lock && gemfile_got_updates=true || gemfile_got_updates=false
-          echo "gemfile_got_updates=$gemfile_got_updates" >> $GITHUB_OUTPUT
+          echo "gemfile_got_updates=$gemfile_got_updates" >> "$GITHUB_OUTPUT"
 
       - name: Run All tests
         if: ${{ steps.gemfile_update_attempt.outputs.gemfile_got_updates }}
