@@ -1,6 +1,7 @@
 name: Nightly Gemfile auto-update
 
-on: 
+on:
+  workflow_dispatch:
   schedule:
     - cron: '45 4 * * *' # run at 4:45 AM UTC
 
