@@ -1,4 +1,4 @@
-name: Nightly Gemfile auto-update
+name: Gemfile auto-update
 
 on:
   workflow_dispatch:
@@ -13,9 +13,9 @@ jobs:
     name: Gemfile.lock auto update
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3.5.2
+      - uses: actions/checkout@v3
 
-      - uses: ruby/setup-ruby-pkgs@v1.32.4
+      - uses: ruby/setup-ruby-pkgs@v1
         with:
           bundler-cache: true
 
