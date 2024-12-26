@@ -2,6 +2,8 @@ name: Push verification
 
 on:
   push:
+    branches:
+      - '*' # Trigger on any branch
   workflow_dispatch:
 
 jobs:
@@ -21,7 +23,27 @@ jobs:
           bundle install
 
       - name: Run All tests
-        if: ${{ env.SHOULD_SKIP == 'false' }}
         run: |
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
+
+      # Step 4: Create or update PR from this branch to main
+      - name: Create or Update Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          LATEST_COMMIT=$(git log -1 --pretty=format:"%h %s")
+          PR_TITLE="PR for branch: $BRANCH_NAME"
+          PR_BODY="### Branch: $BRANCH_NAME\n\n#### Recent Commits:\n$LATEST_COMMIT"
+
+          # Check if a PR already exists for this branch
+          EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json url --jq '.[0].url')
+
+          if [ -z "$EXISTING_PR" ]; then
+            # No PR exists; create a new one
+            gh pr create --base main --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
+          else
+            # PR exists; update the PR description
+            gh pr edit "$EXISTING_PR" --body "$PR_BODY"
+          fi
