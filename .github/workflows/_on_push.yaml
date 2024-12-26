@@ -31,12 +31,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_TITLE="[Auto PR] ${{ env.branch_name }}"
-
           # Check if a PR already exists for this branch
           EXISTING_PR=$(gh pr list --state open --head "${{ env.branch_name }}" --json url --jq '.[0].url')
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
+            PR_TITLE="[Auto PR] ${{ env.branch_name }}"
             gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE""
           fi
