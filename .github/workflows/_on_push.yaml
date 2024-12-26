@@ -28,10 +28,7 @@ jobs:
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
       - name: Debug
-        run: |
-          echo "$COMMITS"
-          echo "echo ${{ env.COMMITS }}"
-          echo "echo ${{ env.commits }}"
+        run: cat $GITHUB_ENV
 
       - name: Create or Update Pull Request
         env:
