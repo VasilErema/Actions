@@ -27,39 +27,22 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
-      - name: Gather all commits
-        id: gather_commits
-        run: |
-          # Ensure the main branch is fetched
-          git fetch origin main
-
-          # Get the current branch name
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-
-          # Collect all commits from the branch
-          COMMITS=$(git log origin/main..HEAD --pretty=format:"- %h %s")
-
-          # Export environment variables for use in later steps
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV   
-          echo "commits<<EOF" >> $GITHUB_ENV
-          # here we can place the command that will generate multi-line text
-          echo -e "$COMMITS" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_TITLE="PR for branch: ${{ env.branch_name }}"
-          PR_BODY="### All commits:\n${{ env.commits }}"
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          LATEST_COMMIT=$(git log -1 --pretty=format:"%h %s")
+          PR_TITLE="PR for branch: $BRANCH_NAME"
+          PR_BODY="### Branch: $BRANCH_NAME\n\n#### Recent Commits:\n$LATEST_COMMIT"
 
           # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --state open --head "${{ env.branch_name }}" --json url --jq '.[0].url')
+          EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json url --jq '.[0].url')
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE" --body "$(echo -e "$PR_BODY")"
+            gh pr create --base main --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
           else
             # PR exists; update the PR description
-            gh pr edit "$EXISTING_PR" --body "$(echo -e "$PR_BODY")"
+            gh pr edit "$EXISTING_PR" --body "$PR_BODY"
           fi
