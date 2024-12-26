@@ -32,9 +32,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --state open --head "${{ env.BRANCH_NAME }}" --json url --jq '.[0].url')
+          EXISTING_PR=$(gh pr list --state open --head "${{ github.ref }}" --json url --jq '.[0].url')
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "${{ env.BRANCH_NAME }}" --title "[Auto PR] ${{ env.BRANCH_NAME }}" --body "Branch name:\n - ${{ env.BRANCH_NAME }}"
+            gh pr create --base main --head "${{ github.ref }}" --title "[Auto PR] ${{ github.ref }}" --body "Branch name:\n - ${{ github.ref }}"
           fi
