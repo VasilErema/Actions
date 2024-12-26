@@ -27,7 +27,6 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
-      # Gather all commits in the branch
       - name: Gather all commits
         id: gather_commits
         run: |
@@ -42,9 +41,8 @@ jobs:
 
           # Export environment variables for use in later steps
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "commits=$COMMITS" >> $GITHUB_ENV
+          echo -e "commits=$COMMITS" >> $GITHUB_ENV
 
-      # Create or Update Pull Request
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,8 +55,8 @@ jobs:
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE" --body "$PR_BODY"
+            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE" --body "$(echo -e "$PR_BODY")"
           else
             # PR exists; update the PR description
-            gh pr edit "$EXISTING_PR" --body "$PR_BODY"
+            gh pr edit "$EXISTING_PR" --body "$(echo -e "$PR_BODY")"
           fi
