@@ -27,22 +27,29 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
-      # Step 4: Create or update PR from this branch to main
+      # Step 3: Gather all commits in the branch
+      - name: Gather all commits
+        id: gather_commits
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          COMMITS=$(git log origin/main..HEAD --pretty=format:"- %h %s")
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "commits=$COMMITS" >> $GITHUB_ENV
+
+      # Step 4: Create or Update Pull Request
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          LATEST_COMMIT=$(git log -1 --pretty=format:"%h %s")
-          PR_TITLE="PR for branch: $BRANCH_NAME"
-          PR_BODY="### Branch: $BRANCH_NAME\n\n#### Recent Commits:\n$LATEST_COMMIT"
+          PR_TITLE="PR for branch: ${{ env.branch_name }}"
+          PR_BODY="### All commits:\n${{ env.commits }}"
 
           # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json url --jq '.[0].url')
+          EXISTING_PR=$(gh pr list --state open --head "${{ env.branch_name }}" --json url --jq '.[0].url')
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
+            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE" --body "$PR_BODY"
           else
             # PR exists; update the PR description
             gh pr edit "$EXISTING_PR" --body "$PR_BODY"
