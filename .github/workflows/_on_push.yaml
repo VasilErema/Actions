@@ -36,5 +36,5 @@ jobs:
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "${{ github.ref }}" --title "[Auto PR] ${{ github.ref }}" --body "Branch name:\n - ${{ github.ref }}"
+            gh pr create --base main --head "${{ github.ref }}" --title "[Auto PR] ${{ github.ref }}" --body "Branch name:/n - ${{ github.ref }}"
           fi
