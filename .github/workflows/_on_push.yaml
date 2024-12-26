@@ -41,13 +41,10 @@ jobs:
 
           # Export environment variables for use in later steps
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV   
-          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          echo "commits<<EOF" >> $GITHUB_ENV
           # here we can place the command that will generate multi-line text
           echo -e "$COMMITS" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
-      - name: Debug commits
-        run: echo "${{ env.commits }}"
 
       - name: Create or Update Pull Request
         env:
