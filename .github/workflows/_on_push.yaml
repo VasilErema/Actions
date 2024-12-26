@@ -43,12 +43,15 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
           echo -e "commits=$COMMITS" >> $GITHUB_ENV
 
+      - name: Debug commits
+        run: echo "${{ env.commits }}"
+
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_TITLE="PR for branch: ${{ env.branch_name }}"
-          PR_BODY="### All commits:\n${{ 'env.commits' }}"
+          PR_BODY="### All commits:\n${{ env.commits }}"
 
           # Check if a PR already exists for this branch
           EXISTING_PR=$(gh pr list --state open --head "${{ env.branch_name }}" --json url --jq '.[0].url')
