@@ -25,16 +25,17 @@ jobs:
       - name: Run All tests
         run: |
           echo 'TODO: Run all tests'
-          echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
           # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --state open --head "${{ github.ref }}" --json url --jq '.[0].url')
+          EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json url --jq '.[0].url')
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "${{ github.ref }}" --title "[Auto PR] ${{ github.ref }}" --body "Branch name:/n - ${{ github.ref }}"
+            gh pr create --base main --head "$BRANCH_NAME" --title "[Auto PR] $BRANCH_NAME" --body "Branch name:/n - $BRANCH_NAME"
           fi
