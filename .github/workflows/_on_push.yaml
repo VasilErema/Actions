@@ -19,3 +19,9 @@ jobs:
         run: |
           bundle config unset deployment
           bundle install
+
+      - name: Run All tests
+        if: ${{ env.SHOULD_SKIP == 'false' }}
+        run: |
+          echo 'TODO: Run all tests'
+          echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
