@@ -17,7 +17,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Try update bundle
+      - name: Install bundle
         run: |
           bundle config unset deployment
           bundle install
@@ -27,7 +27,7 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
-      # Step 3: Gather all commits in the branch
+      # Gather all commits in the branch
       - name: Gather all commits
         id: gather_commits
         run: |
@@ -36,11 +36,14 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
           echo "commits=$COMMITS" >> $GITHUB_ENV
 
-      # Step 4: Create or Update Pull Request
+      # Create or Update Pull Request
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Ensure the main branch is fetched
+          git fetch origin main
+
           PR_TITLE="PR for branch: ${{ env.branch_name }}"
           PR_BODY="### All commits:\n${{ env.commits }}"
 
