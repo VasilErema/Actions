@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify_installation_job:
-    name: Verify if we can istall Gems
+    name: Verify if we can install Gems
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
