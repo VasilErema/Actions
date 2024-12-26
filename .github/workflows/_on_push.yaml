@@ -27,6 +27,12 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
+      - name: Debug
+        run: |
+          echo "$COMMITS"
+          echo "echo ${{ env.COMMITS }}"
+          echo "echo ${{ env.commits }}"
+
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
