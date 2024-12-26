@@ -37,5 +37,5 @@ jobs:
 
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
-            gh pr create --base main --head "$BRANCH_NAME" --title "[Auto PR] $BRANCH_NAME" --body "Branch name:/n - $BRANCH_NAME"
+            gh pr create --base main --head "$BRANCH_NAME" --title "[Auto PR] $BRANCH_NAME" --body "$(echo -e "Branch name:\n- $BRANCH_NAME")"
           fi
