@@ -1,0 +1,21 @@
+name: Push verification
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  verify_installation_job:
+    name: Verify if we can istall Gems
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Try update bundle
+        run: |
+          bundle config unset deployment
+          bundle install
