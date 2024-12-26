@@ -27,9 +27,6 @@ jobs:
           echo 'TODO: Run all tests'
           echo "SHOULD_SKIP=${{ env.SHOULD_SKIP }}"
 
-      - name: Debug
-        run: cat $GITHUB_ENV
-
       - name: Create or Update Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,5 +37,5 @@ jobs:
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
             PR_TITLE="[Auto PR] ${{ env.branch_name }}"
-            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE""
+            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE"
           fi
