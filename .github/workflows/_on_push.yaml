@@ -37,5 +37,5 @@ jobs:
           if [ -z "$EXISTING_PR" ]; then
             # No PR exists; create a new one
             PR_TITLE="[Auto PR] ${{ env.branch_name }}"
-            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE --body ""
+            gh pr create --base main --head "${{ env.branch_name }}" --title "$PR_TITLE" --body ""
           fi
