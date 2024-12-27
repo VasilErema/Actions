@@ -6,6 +6,6 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: bundler
-    directory: "/ruby"
+    directory: "/"
     schedule:
       interval: "weekly"
