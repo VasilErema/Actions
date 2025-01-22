@@ -41,4 +41,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add Gemfile.lock
           git commit -m"Automatic update of Gemfile.lock"
-          git push --force
+          git push --force-with-lease
